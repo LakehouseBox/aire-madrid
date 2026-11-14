@@ -4,13 +4,17 @@
 -- day from the 30-day file the next morning. Rows repeat between the two: readers keep the latest per
 -- (station_code, magnitude, hour_start_at) by __ingest_ts. Variable codes: ref.magnitudes (81 wind m/s, 82 direction, 83 temperature, 86 humidity, 87 pressure, 88 radiation, 89 rain).
 -- Fetched with http_get: the API answers HEAD with Content-Length: 1, so read_csv/read_text would read one byte
--- (research/133 in tablemere, data-sources.md 1a). The body comes back JSON-typed: ->> '$' unwraps the string.
+-- (docs/research/data-sources.md 1a). Its body is text on some DuckDB versions and JSON on others: the
+-- to_json/json_extract_string pair gives the text either way.
 WITH f AS MATERIALIZED (
-  SELECT (http_get('https://ciudadesabiertas.madrid.es/dynamicAPI/API/query/meteo_tiemporeal.csv?pageSize=5000')).body ->> '$' AS txt   -- the body comes back JSON-typed: unwrap the string
+  SELECT json_extract_string(to_json((http_get('https://ciudadesabiertas.madrid.es/dynamicAPI/API/query/meteo_tiemporeal.csv?pageSize=5000')).body), '$') AS txt
+),
+raw_lines AS MATERIALIZED (   -- only the lines: a lateral join would carry the whole file along with each one
+  SELECT unnest(string_split(replace(txt, chr(13), ''), chr(10))) AS line FROM f
 ),
 lines AS (
   SELECT string_split(trim(replace(line, chr(65279), '')), ';') AS c
-  FROM f, unnest(string_split(replace(txt, chr(13), ''), chr(10))) AS t(line)
+  FROM raw_lines
   WHERE line LIKE '28;%'
 ),
 hours AS (
