@@ -1,0 +1,48 @@
+# aire-madrid on LakehouseBox, declared.
+#
+#   lhbox migrate --catalog aire_madrid      # sql/migrations/*.sql in order: tables, partitioning, descriptions
+#   lhbox plan -f lakehouse.yaml             # what apply would create or change
+#   lhbox apply -f lakehouse.yaml            # creates and updates; never deletes without --prune
+#
+# Tables live in sql/migrations/ (append-only, reviewed SQL); nothing below ever drops data.
+# Not declared here yet (set once with the CLI, see README "Setting it up"): the agent's memory topics.
+
+version: 1
+
+project: public-data
+
+catalogs:
+  aire_madrid:
+    public: false                      # public once the post is out
+    default_format_version: 3
+    agents_md: docs/AGENTS.md
+    migrations: sql/migrations/
+
+    connections:
+      aemet:                           # the organisation's AEMET web integration, as in embalses
+        url_prefix: https://opendata.aemet.es/
+        integration: aemet
+
+    sinks:
+      # ── pulled by LakehouseBox itself (scheduled SQL over the publishers' own feeds) ──
+      air_hourly:       { table: obs.air_hourly,       sql: sql/ingest/air_hourly.sql,       every: 1h,  offset: 25m }
+      air_hourly_daily: { table: obs.air_hourly,       sql: sql/ingest/air_hourly_daily.sql, every: 1d,  offset: 400m }
+      meteo_hourly:     { table: obs.meteo_hourly,     sql: sql/ingest/meteo_hourly.sql,     every: 1h,  offset: 27m }
+      traffic:          { table: obs.traffic,          sql: sql/ingest/traffic.sql,          every: 5m,  offset: 1m }
+      protocol_feed:    { table: obs.protocol_feed,    sql: sql/ingest/protocol_feed.sql,    every: 15m, offset: 3m }
+      aemet_forecast:   { table: obs.weather_forecast, sql: sql/ingest/aemet_forecast.sql,   every: 3h,  offset: 50m }   # created by the key's owner
+
+      # ── derived: scheduled SQL that reads the catalog; each run replaces the table ──
+      now_daily_station:      { table: now.daily_station,      sql: sql/now/daily_station.sql,      every: 1h, offset: 35m, mode: replace, min_rows: 100, format_version: 2 }
+      now_daily_city:         { table: now.daily_city,         sql: sql/now/daily_city.sql,         every: 1h, offset: 40m, mode: replace, min_rows: 1,   format_version: 2 }
+      now_compliance:         { table: now.compliance,         sql: sql/now/compliance.sql,         every: 1d, offset: 420m, mode: replace, min_rows: 1,   format_version: 2 }
+      now_scored_predictions: { table: now.scored_predictions, sql: sql/now/scored_predictions.sql, every: 1h, offset: 45m, mode: replace, format_version: 2 }
+
+    agents:
+      aire_forecaster:
+        prompt: agent/forecaster.md
+        schedule: "0 12 * * *"         # noon: the protocol's own deadline for announcing restrictions
+        tz: Europe/Madrid
+        reads: [aire_madrid]
+        writes: [aire_madrid.agent.predictions]
+        notify_owner: true

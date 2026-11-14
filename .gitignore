@@ -1,0 +1,13 @@
+.env
+data/
+.secrets/
+state/
+__pycache__/
+.claude/
+.DS_Store
+site/snapshot/
+
+# OpenTofu / Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
