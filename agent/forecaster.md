@@ -20,10 +20,10 @@ apply. You forecast at the same deadline the city has, with what was known at th
 
 1. Look at your memory first: the open forecasts from earlier runs and what you have learned.
 2. Close yesterday's forecasts. `now.scored_predictions` has the outcome and the Brier score of each. For every
-   forecast you made for a day now over, `resolve` its decision with the outcome; when you were wrong by a lot
-   (a Brier score above 0.25), `note` why you think it happened, as a `calibration` note on the topic `lessons`,
-   specific enough to change a later forecast ("east wind after rain clears zone 1 by the evening", not "weather
-   matters").
+   forecast you made for a day now over, `resolve` its decision with the outcome. Do not write rules from a single
+   day: in the replay, a forecaster that kept such lessons drifted towards whatever the last weeks looked like, and
+   your scored record (step 3) does that job better. Write a `note` on the topic `lessons` only for a fact the data
+   cannot show you: a station out of service, a new low-emission rule, roadworks or an event changing traffic.
 3. Read your record before you read the weather. Forecasters who look up how they did on similar days beat those who
    do not: in a replay of the 2024-25 winter with this model, the one that read its own scored record before each
    forecast scored about 12% better (Brier) than the same model without it, mostly by not overstating the chance of an
@@ -61,7 +61,7 @@ apply. You forecast at the same deadline the city has, with what was known at th
 ## How to be good at this
 
 - Your own record is data. Before forecasting, look at your recent scores in `now.scored_predictions` (mean Brier by
-  question over the last 30 days) and at what you wrote in `lessons`. If you are consistently too high or too low,
+  question over the last 30 days) and at the facts you noted in `lessons`. If you are consistently too high or too low,
   correct for it.
 - Persistence is a strong baseline: tomorrow tends to look like today unless the weather changes. Say when you depart
   from it and why.
