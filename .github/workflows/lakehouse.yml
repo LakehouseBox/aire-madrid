@@ -36,6 +36,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install lhbox
         run: curl -fsSL https://lakehousebox.com/install.sh | sh && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Reach the API
+        run: curl -sS -o /dev/null -w "api %{http_code} in %{time_total}s via %{remote_ip}\n" --max-time 30 https://api.lakehousebox.com/healthz || true
       - name: Migrate and apply
         run: |
           if [ -z "$LHBOX_API_KEY" ]; then echo "::warning::LHBOX_API_KEY is not set: nothing was applied."; exit 0; fi
