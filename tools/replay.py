@@ -124,13 +124,58 @@ def scorecard(rows, known_until):
     return "\n".join(lines)
 
 
+def is_off(d, hol):
+    return d.weekday() >= 5 or d in hol
+
+
+def record_view(rows, days, hol, t, known_until):
+    """What the record arm sees: its own scored forecasts, as a table query would return them. No model call."""
+    known = [r for r in rows if r["target_day"] <= str(known_until)]
+    if len(known) < 7:
+        return "Your record: fewer than 7 scored forecasts so far."
+    out = ["Your record, computed from the table of your own past forecasts and what happened (%d scored days):" % len(known)]
+    last = known[-60:]
+    for q in QUESTIONS:
+        ps, os_ = [r["forecast"][q] for r in last], [r["outcome"][q] for r in last]
+        out.append("- %s, last %d days: you said %.2f on average, it happened %.2f; mean Brier %.3f"
+                   % (q, len(last), sum(ps) / len(ps), sum(os_) / len(os_), sum((p - o) ** 2 for p, o in zip(ps, os_)) / len(ps)))
+    out.append("When you said ... it happened (all scored days):")
+    for q in ("any_over_50", "five_over_50"):
+        cells = []
+        for lo_, hi_ in ((0, .2), (.2, .4), (.4, .6), (.6, .8), (.8, 1.01)):
+            b = [r for r in known if lo_ <= r["forecast"][q] < hi_]
+            if b:
+                cells.append("%.1f-%.1f: %d/%d" % (lo_, min(hi_, 1), sum(r["outcome"][q] for r in b), len(b)))
+        out.append("- %s: %s" % (q, "; ".join(cells)))
+    w = days[t]
+    def dist(r):
+        x = days[dt.date.fromisoformat(r["target_day"])]
+        m = days[dt.date.fromisoformat(r["made_on"])]
+        return (abs((x["wind_ms"] or 0) - (w["wind_ms"] or 0)) / 0.7
+                + 1.5 * (((x["rain_mm"] or 0) > 0.5) != ((w["rain_mm"] or 0) > 0.5))
+                + abs(((x["temp_max_c"] or 0) - (x["temp_min_c"] or 0)) - ((w["temp_max_c"] or 0) - (w["temp_min_c"] or 0))) / 4
+                + 1.0 * (is_off(dt.date.fromisoformat(r["target_day"]), hol) != is_off(t, hol))
+                + abs((m["morning_max_hour"] or 0) - (days[t - dt.timedelta(days=1)]["morning_max_hour"] or 0)) / 30)
+    out.append("Your past days most like tomorrow (weather of the day, weekday/holiday, the morning before):")
+    for r in sorted(known, key=dist)[:6]:
+        x, td = days[dt.date.fromisoformat(r["target_day"])], dt.date.fromisoformat(r["target_day"])
+        out.append("- %s %s: wind %s, rain %s, temp %s..%s | you said any_over_50 %.2f, five_over_50 %.2f | happened: "
+                   "stations over 50: %s, worst mean %s"
+                   % (x["weekday"][:3], td.strftime("%d %b"), x["wind_ms"], x["rain_mm"], x["temp_min_c"], x["temp_max_c"],
+                      r["forecast"]["any_over_50"], r["forecast"]["five_over_50"], x["stations_over_eu2030_day"],
+                      x["worst_daily_mean"]))
+    return "\n".join(out)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", default="data/replay_days.parquet")
     ap.add_argument("--out", default="data/replay")
     ap.add_argument("--from", dest="lo", default="2024-10-01")
     ap.add_argument("--to", dest="hi", default="2025-03-31")
+    ap.add_argument("--arms", default="persistence,fresh,memory", help="any of persistence,fresh,memory,record")
     a = ap.parse_args()
+    arms = set(a.arms.split(","))
     base, key = os.environ["LHBOX_REPLAY_BASE_URL"].rstrip("/"), os.environ["LHBOX_REPLAY_KEY"]
     con = duckdb.connect()
     cols = [c[0] for c in con.execute("DESCRIBE SELECT * FROM read_parquet(?)", [a.days]).fetchall()]
@@ -143,7 +188,7 @@ def main():
     os.makedirs(a.out, exist_ok=True)
     fpath, mpath = os.path.join(a.out, "forecasts.jsonl"), os.path.join(a.out, "memory.jsonl")
     done = set()
-    rows = {"fresh": [], "memory": [], "persistence": []}
+    rows = {"fresh": [], "memory": [], "persistence": [], "record": []}
     if os.path.exists(fpath):                                  # resume: keep what is there
         for l in open(fpath):
             r = json.loads(l); rows[r["arm"]].append(r); done.add((r["arm"], r["made_on"]))
@@ -163,7 +208,7 @@ def main():
         # Memory arm: first close the forecast made two days ago for yesterday (yesterday is now complete).
         y = d - dt.timedelta(days=1)
         prev = next((r for r in rows["memory"] if r["target_day"] == str(y)), None)
-        if prev and ("memory", str(d)) not in done:
+        if "memory" in arms and prev and ("memory", str(d)) not in done:
             happened = outcome(days[y])
             user = ("Notebook:\n%s\n\nYour forecast (made two days ago): %s\n\nThe brief you had:\n%s\n\nWhat happened: %s"
                     % ("\n".join("- " + s for s in lessons) or "(empty)", json.dumps(prev["forecast"]),
@@ -173,15 +218,18 @@ def main():
             lessons = [str(s)[:300] for s in (res.get("lessons") or [])][:12]
             mf.write(json.dumps({"day": str(d), "lessons": lessons, "note": res.get("note")}) + "\n"); mf.flush()
         jobs = {}
-        with cf.ThreadPoolExecutor(2) as ex:
-            if ("fresh", str(d)) not in done:
+        with cf.ThreadPoolExecutor(3) as ex:
+            if "record" in arms and ("record", str(d)) not in done:
+                jobs["record"] = ex.submit(call, base, key, SYSTEM,
+                                           record_view(rows["record"], days, hol, t, y) + "\n\n" + b)
+            if "fresh" in arms and ("fresh", str(d)) not in done:
                 jobs["fresh"] = ex.submit(call, base, key, SYSTEM, b)
-            if ("memory", str(d)) not in done:
+            if "memory" in arms and ("memory", str(d)) not in done:
                 mem = ("Your notebook of lessons from earlier days:\n%s\n\n%s\n\n%s"
                        % ("\n".join("- " + s for s in lessons) or "(empty)", scorecard(rows["memory"], y), b))
                 jobs["memory"] = ex.submit(call, base, key, SYSTEM, mem)
             got = {k: f.result() for k, f in jobs.items()}
-        if ("persistence", str(d)) not in done:
+        if "persistence" in arms and ("persistence", str(d)) not in done:
             got["persistence"] = (persistence(days, d), {})
         happened = outcome(days[t])
         for arm, (res, u) in got.items():
@@ -194,10 +242,8 @@ def main():
                  "lessons_count": len(lessons) if arm == "memory" else None}
             rows[arm].append(r)
             ff.write(json.dumps(r) + "\n"); ff.flush()
-        print("%s  any50 %s  fresh %.2f memory %.2f persist %.2f  | lessons %d  tokens %d"
-              % (t, happened["any_over_50"], got.get("fresh", ({}, {}))[0].get("any_over_50", -1) if "fresh" in got else -1,
-                 got.get("memory", ({}, {}))[0].get("any_over_50", -1) if "memory" in got else -1,
-                 got["persistence"][0]["any_over_50"] if "persistence" in got else -1, len(lessons), tokens), flush=True)
+        print("%s  any50 %s  %s  | lessons %d  tokens %d" % (t, happened["any_over_50"], "  ".join(
+            "%s %.2f" % (k, v[0].get("any_over_50", -1)) for k, v in sorted(got.items())), len(lessons), tokens), flush=True)
 
 
 if __name__ == "__main__":
