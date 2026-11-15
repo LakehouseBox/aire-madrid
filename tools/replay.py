@@ -49,15 +49,19 @@ Answer with JSON only: {"lessons": ["...", ...], "note": "what you changed and w
 
 def call(base, key, system, user, tries=6):
     body = {"model": MODEL, "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-            "max_tokens": 6000, "temperature": 0.3, "response_format": {"type": "json_object"}}
+            "max_tokens": 16000, "temperature": 0.3, "response_format": {"type": "json_object"}}
     for i in range(tries):
         try:
             req = urllib.request.Request(base + "/chat/completions", data=json.dumps(body).encode(),
                                          headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
             with urllib.request.urlopen(req, timeout=240) as r:
                 d = json.load(r)
-            txt = d["choices"][0]["message"]["content"] or ""
+            ch = d["choices"][0]
+            txt = ch["message"].get("content") or ""
             m = re.search(r"\{.*\}", txt, re.S)
+            if not m:   # say why: a reasoning model that spends max_tokens thinking answers no content
+                raise ValueError("no JSON (finish_reason %s, %d content chars, usage %s)"
+                                 % (ch.get("finish_reason"), len(txt), d.get("usage", {}).get("completion_tokens")))
             return json.loads(m.group(0)), d.get("usage", {})
         except Exception as exc:
             print("  model retry %d: %s" % (i + 1, str(exc)[:120]), file=sys.stderr)

@@ -36,6 +36,8 @@ def main():
                    observed_worst_mean DOUBLE, rationale VARCHAR)""")
     con.executemany("INSERT INTO f VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                     [r[:8] + (float(r[8]) if isinstance(r[8], (int, float)) else None,) + r[9:] for r in fc])
+    # Folders run in parallel over date ranges are merged; a day forecast twice (a resumed run) keeps one row.
+    con.execute("CREATE OR REPLACE TABLE f AS SELECT DISTINCT ON (arm, made_on, question) * FROM f ORDER BY arm, made_on, question")
     con.execute("CREATE TABLE m (replay VARCHAR, day DATE, lessons VARCHAR, note VARCHAR)")
     if mem:
         con.executemany("INSERT INTO m VALUES (?,?,?,?)", mem)
