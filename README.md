@@ -78,6 +78,8 @@ lhbox migrate --catalog aire_madrid
 lhbox duckdb --catalog aire_madrid < sql/reference/load_reference.sql    # once, into empty ref tables
 python3 tools/backfill_air_history.py --from-year 2010                   # writes data/air_history.parquet
 lhbox duckdb --catalog aire_madrid -- -c "INSERT INTO aire_madrid.obs.air_hourly SELECT *, now() FROM 'data/air_history.parquet'"
+python3 tools/backfill_meteo_history.py                                  # weather since 2019: data/meteo_history.parquet
+lhbox duckdb --catalog aire_madrid -- -c "INSERT INTO aire_madrid.obs.meteo_hourly SELECT *, now() FROM 'data/meteo_history.parquet'"
 lhbox apply -f lakehouse.yaml
 lhbox agent update aire_forecaster --topic forecasts --topic lessons     # memory topics: not in lakehouse.yaml yet
 ```
