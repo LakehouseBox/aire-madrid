@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aire de Madrid: ¿lo sabe la víspera un agente?</title>
+<style>
+@font-face { font-family: 'Source Sans 3'; font-weight: 400; font-display: swap; src: url(../assets/source-sans-3-400.woff2) format('woff2'); }
+@font-face { font-family: 'Source Sans 3'; font-weight: 600; font-display: swap; src: url(../assets/source-sans-3-600.woff2) format('woff2'); }
+@font-face { font-family: 'Source Sans 3'; font-weight: 700; font-display: swap; src: url(../assets/source-sans-3-700.woff2) format('woff2'); }
+@font-face { font-family: 'Source Sans 3'; font-weight: 800; font-display: swap; src: url(../assets/source-sans-3-800.woff2) format('woff2'); }
+:root {
+  --bg: #fff; --ink: #0f2233; --muted: #55697a; --faint: #8b9aa8; --line: #e1e8ee; --land: #eef2f5; --tint: #f3f7fc;
+  --brand: #1463e0; --bad: #c2410c; --bad-bg: #fdeee4; --good: #0f7b55; --good-bg: #e3f4ec;
+  --c-persistence: #8b9aa8; --c-fresh: #f08a3c; --c-memory: #7c3aed; --c-record: #1463e0;
+  --sans: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: ui-monospace, Menlo, Consolas, monospace;
+  --r: 8px; --rs: 6px;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+h1 { font-weight: 800; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.05; letter-spacing: -0.02em; margin: 0; }
+h2 { font-weight: 800; font-size: clamp(22px, 3vw, 28px); letter-spacing: -0.01em; margin: 0; line-height: 1.15; }
+h3 { font-size: 17px; font-weight: 700; margin: 0 0 6px; }
+p { margin: 8px 0; }
+.label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.muted { color: var(--muted); } .small { font-size: 14px; }
+a { color: var(--brand); }
+header.top { border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 16px; height: 52px; }
+.brand { font-weight: 700; font-size: 18px; }
+.status { margin-left: auto; font-size: 13px; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: #f0a030; } .status.ok i { background: #1baf7a; }
+main { padding: 28px 0 40px; }
+.lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 62ch; margin-top: 12px; }
+.sec { margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--line); }
+.sechead { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; justify-content: space-between; margin-bottom: 14px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.grid3 > div { padding: 0 20px; border-left: 1px solid var(--line); } .grid3 > div:first-child { border-left: 0; padding-left: 0; }
+.big { font-weight: 800; font-size: 46px; line-height: 1; letter-spacing: -0.02em; } .big small { font-size: 20px; font-weight: 700; }
+.card { border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; }
+.chip { display: inline-block; font-weight: 700; font-size: 13px; padding: 1px 9px; border-radius: 999px; background: var(--good-bg); color: var(--good); }
+.chip.bad { background: var(--bad-bg); color: var(--bad); } .chip.n { background: var(--land); color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+td.n, th.n { text-align: right; }
+.tablewrap { overflow-x: auto; }
+.seg { display: inline-flex; background: var(--land); border-radius: var(--rs); padding: 3px; flex-wrap: wrap; }
+.seg button { font: inherit; font-size: 14px; padding: 5px 12px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--brand); color: #fff; font-weight: 600; }
+.btn { font: inherit; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: var(--rs); border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--muted); margin: 6px 0; }
+.legend i { display: inline-block; width: 18px; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { font-family: var(--sans); font-size: 12px; fill: var(--muted); }
+.placeholder { background: var(--land); border-radius: var(--rs); min-height: 120px; }
+.err { color: var(--bad); font-size: 14px; }
+.notebook ol { margin: 8px 0 0; padding-left: 22px; } .notebook li { margin: 4px 0; }
+.notebook .note { border-left: 3px solid var(--c-memory); padding: 4px 10px; background: var(--tint); margin-top: 10px; font-size: 15px; }
+input[type=range] { width: 100%; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.bar { height: 10px; border-radius: 999px; background: var(--land); overflow: hidden; } .bar i { display: block; height: 100%; background: var(--brand); }
+footer { margin-top: 40px; padding: 20px 0 30px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+@media (max-width: 760px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .grid3 { grid-template-columns: 1fr; } .grid3 > div { border-left: 0; padding: 12px 0; border-top: 1px solid var(--line); } .grid3 > div:first-child { border-top: 0; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><span class="brand">Aire de Madrid</span><span class="status" id="status"><i></i><span>Cargando…</span></span></div></header>
+<main class="wrap">
+  <div class="label">NO2 · Madrid · normas de la UE para 2030</div>
+  <h1>¿Puede un agente saber la víspera si Madrid tendrá que restringir el tráfico?</h1>
+  <p class="lede">Madrid no activa su protocolo de dióxido de nitrógeno desde diciembre de 2021, y en 2025 todas sus estaciones cumplieron las normas en vigor. Desde 2030 la UE es mucho más exigente. Un agente previsor lee cada día a las 12:00 el aire, el tiempo y el tráfico, pronostica el día siguiente y al otro día se le puntúa. Esta página muestra cómo le va, y si aprende.</p>
+
+  <section class="sec" id="hoy">
+    <div class="sechead"><h2>Hoy</h2><span class="muted small" id="fresh"></span></div>
+    <div class="grid2">
+      <div id="p-days"><div class="placeholder"></div></div>
+      <div id="p-agent"><div class="placeholder"></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="2030">
+    <div class="sechead"><h2>Madrid con las reglas de 2030</h2><span class="muted small">Días en que alguna estación superó la media diaria de 50 µg/m³ (el límite de la UE desde 2030 permite 18 al año)</span></div>
+    <div class="grid2">
+      <div id="p-years"><div class="placeholder"></div></div>
+      <div id="p-comp"><div class="placeholder"></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="aprende">
+    <div class="sechead"><h2>¿Aprende? Un invierno repetido día a día</h2>
+      <div class="seg" id="qsel" role="group" aria-label="Pregunta"></div></div>
+    <p class="muted" style="max-width:80ch">Del 1 de octubre de 2024 al 31 de marzo de 2025, cada día a mediodía, cuatro previsores pronostican el día siguiente con lo que se sabía a esa hora. <b style="color:var(--c-persistence)">Persistencia</b>: una regla fija, sin modelo. <b style="color:var(--c-fresh)">Sin memoria</b>: el modelo, cada día desde cero. <b style="color:var(--c-memory)">Cuaderno</b>: el modelo con un cuaderno de lecciones que reescribe cada día al ver cómo le fue. <b style="color:var(--c-record)">Historial</b>: el modelo que consulta la tabla de sus propias previsiones puntuadas (cuánto acertó cuando dijo cada probabilidad, y qué pasó en días parecidos). Se mide con la puntuación de Brier: el error cuadrático de la probabilidad, 0 es perfecto y menos es mejor.</p>
+    <div id="p-curve"><div class="placeholder" style="min-height:260px"></div></div>
+    <div class="grid2" style="margin-top:22px">
+      <div id="p-scores"><div class="placeholder"></div></div>
+      <div id="p-calib"><div class="placeholder"></div></div>
+    </div>
+    <div class="card notebook" style="margin-top:22px" id="p-notebook"><div class="placeholder"></div></div>
+    <div style="margin-top:22px" id="p-daysreplay"><div class="placeholder"></div></div>
+  </section>
+
+  <section class="sec" id="metodo">
+    <h2>Cómo se hace</h2>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <p>Todo está en un catálogo Apache Iceberg en LakehouseBox: las mediciones horarias de las 24 estaciones desde 2010, la meteorología de la red municipal desde 2019, el tráfico cada 5 minutos, el estado del protocolo y la previsión de AEMET. Consultas SQL programadas lo traen y lo resumen; esta página lo lee en tu navegador.</p>
+        <p>El agente es un agente alojado de LakehouseBox: un prompt que se ejecuta junto a los datos cada día a las 12:00, la hora a la que el protocolo exige anunciar las restricciones del día siguiente. Sus previsiones, sus puntuaciones y su memoria son tablas del catálogo.</p>
+      </div>
+      <div>
+        <p><b>Límites de la repetición.</b> El tiempo del día siguiente se le da tal como se midió: un pronóstico perfecto, igual para los cuatro previsores. El año se oculta al modelo, el mes y el día de la semana no. Cada previsor solo ve los resultados de días ya terminados a mediodía.</p>
+        <p><b>Fuentes.</b> Ayuntamiento de Madrid, datos abiertos (CC BY 4.0): calidad del aire, meteorología, tráfico Informo, activaciones del protocolo. AEMET OpenData. Directivas 2008/50/CE y (UE) 2024/2881; OMS 2021.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">Código: <a href="#" id="repo">github.com/lakehousebox/aire-madrid</a> · Catálogo <code>aire_madrid</code> en LakehouseBox</div></footer>
+
+<script type="module">
+import { lhbox } from '/_lhbox/lhbox.js';
+
+const ARMS = ['persistence', 'fresh', 'memory', 'record'];
+const ARM_NAME = { persistence: 'Persistencia', fresh: 'Sin memoria', memory: 'Cuaderno', record: 'Historial' };
+const ARM_COLOR = { persistence: 'var(--c-persistence)', fresh: 'var(--c-fresh)', memory: 'var(--c-memory)', record: 'var(--c-record)' };
+const Q_NAME = { any_over_50: 'Alguna estación > 50', five_over_50: '5 o más estaciones > 50', ser_over_60: 'Recargo SER (> 60)' };
+const REPLAY = 'winter 2024-25';
+const nf = (v, d = 0) => v == null ? '–' : Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fdate = (s, o = { weekday: 'short', day: 'numeric', month: 'short' }) => new Date(s + 'T12:00:00Z').toLocaleDateString('es-ES', o);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const q = async (sql, params) => (await lhbox.query(sql, params ? { params } : undefined)).rows;
+let state = { q: 'any_over_50', d: null };
+
+document.getElementById('repo').addEventListener('click', (e) => { e.preventDefault(); lhbox.open('https://github.com/lakehousebox/aire-madrid'); });
+
+// ---------- Hoy
+lhbox.panel(document.getElementById('p-days'), async (el) => {
+  const [f] = await q(`SELECT max(hour_start_at) AS t FROM aire_madrid.obs.air_hourly WHERE hour_start_at > now() - INTERVAL 3 DAY`);
+  const st = document.getElementById('status');
+  st.classList.add('ok'); st.lastChild.textContent = 'Datos hasta ' + new Date(f.t).toLocaleString('es-ES', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+  document.getElementById('fresh').textContent = 'Última hora medida: ' + new Date(f.t).toLocaleString('es-ES');
+  const rows = await q(`SELECT day::VARCHAR AS day, worst_daily_mean, stations_over_eu2030_day AS over50, stations_reporting,
+      ser_background_mean, ser_surcharge_next_day_pct AS ser, protocol_level
+    FROM aire_madrid.now.daily_city WHERE day >= current_date - 8 ORDER BY day DESC LIMIT 8`);
+  el.innerHTML = `<h3>Los últimos días</h3><div class="tablewrap"><table><thead><tr><th>Día</th><th class="n">Peor media</th><th class="n">Estaciones &gt; 50</th><th class="n">Fondo (SER)</th><th>Protocolo</th></tr></thead><tbody>${
+    rows.map((r) => `<tr><td>${fdate(r.day)}</td><td class="n">${nf(r.worst_daily_mean, 1)}</td><td class="n">${r.over50 > 0 ? `<span class="chip bad">${r.over50}</span>` : '<span class="chip">0</span>'}</td><td class="n">${nf(r.ser_background_mean, 1)}${r.ser > 0 ? ` <span class="chip bad">+${r.ser}%</span>` : ''}</td><td>${r.protocol_level === 'none' ? '<span class="muted">—</span>' : `<span class="chip bad">${esc(r.protocol_level)}</span>`}</td></tr>`).join('')
+  }</tbody></table></div><p class="small muted">Media diaria de NO2 en µg/m³. El día en curso es parcial.</p>`;
+});
+
+lhbox.panel(document.getElementById('p-agent'), async (el) => {
+  const rows = await q(`SELECT target_day::VARCHAR AS target_day, question, scope, probability, expected_value, would_restrict, rationale, made_at
+    FROM aire_madrid.agent.predictions
+    WHERE target_day = (SELECT max(target_day) FROM aire_madrid.agent.predictions)
+    QUALIFY row_number() OVER (PARTITION BY question, scope ORDER BY made_at DESC) = 1
+    ORDER BY question, scope`);
+  const [rec] = await q(`SELECT count(*) FILTER (WHERE brier IS NOT NULL) AS n, avg(brier) AS b
+    FROM aire_madrid.now.scored_predictions WHERE is_latest`);
+  if (!rows.length) { el.innerHTML = '<h3>La previsión del agente</h3><p class="muted">Todavía no hay previsiones: el agente pronostica cada día a las 12:00.</p>'; return; }
+  const city = rows.find((r) => r.question === 'eu2030.no2.day' && r.scope === 'city');
+  const zones = rows.filter((r) => r.question === 'eu2030.no2.day' && r.scope.startsWith('zone:'));
+  const other = rows.filter((r) => r.question !== 'eu2030.no2.day');
+  const restrict = rows.filter((r) => r.would_restrict);
+  el.innerHTML = `<h3>La previsión del agente para el ${fdate(rows[0].target_day, { weekday: 'long', day: 'numeric', month: 'long' })}</h3>
+    <div class="big">${city ? nf(city.probability * 100) : '–'}<small>%</small></div>
+    <div class="muted">probabilidad de que alguna estación supere la media diaria de 50 µg/m³ ${restrict.length ? '· <span class="chip bad">restringiría el tráfico</span>' : '· <span class="chip">no restringiría</span>'}</div>
+    <p>${esc(city?.rationale ?? '')}</p>
+    <div class="tablewrap"><table><tbody>
+      ${zones.map((z) => `<tr><td>Zona ${esc(z.scope.slice(5))}</td><td class="n" style="width:30%"><div class="bar"><i style="width:${z.probability * 100}%"></i></div></td><td class="n">${nf(z.probability * 100)}%</td></tr>`).join('')}
+      ${other.map((o) => `<tr><td>${esc({ 'who2021.no2.day': 'OMS: media > 25', 'ser.no2.surcharge60': 'Recargo SER', 'protocol.no2.preaviso': 'Protocolo: preaviso' }[o.question] ?? o.question)}</td><td></td><td class="n">${nf(o.probability * 100)}%</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="small muted">Hecha ${new Date(rows[0].made_at).toLocaleString('es-ES')}. ${rec.n ? `Su historial: ${rec.n} previsiones puntuadas, Brier medio ${nf(rec.b, 3)}.` : 'Aún sin previsiones puntuadas.'}</p>`;
+});
+
+// ---------- 2030
+lhbox.panel(document.getElementById('p-years'), async (el) => {
+  const rows = await q(`SELECT year(day) AS y, count(*) FILTER (WHERE stations_over_eu2030_day > 0) AS d50,
+      count(*) FILTER (WHERE ser_surcharge_next_day_pct > 0) AS ser, count(*) FILTER (WHERE protocol_level <> 'none') AS prot,
+      count(*) AS ndays
+    FROM aire_madrid.now.daily_city WHERE day >= DATE '2010-01-01' GROUP BY 1 ORDER BY 1`);
+  const W = 560, H = 230, pad = { l: 34, r: 8, t: 12, b: 26 };
+  const max = Math.max(...rows.map((r) => r.d50));
+  const bw = (W - pad.l - pad.r) / rows.length;
+  const y = (v) => pad.t + (H - pad.t - pad.b) * (1 - v / max);
+  const ticks = [0, 100, 200, 300].filter((t) => t <= max);
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Días al año con alguna estación por encima de 50">
+    ${ticks.map((t) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${pad.l - 6}" y="${y(t) + 4}" text-anchor="end">${t}</text>`).join('')}
+    <line x1="${pad.l}" x2="${W - pad.r}" y1="${y(18)}" y2="${y(18)}" stroke="var(--bad)" stroke-dasharray="4 3"/><text x="${W - pad.r}" y="${y(18) - 4}" text-anchor="end" style="fill:var(--bad)">18 permitidos</text>
+    ${rows.map((r, i) => `<rect x="${pad.l + i * bw + 2}" y="${y(r.d50)}" width="${bw - 4}" height="${y(0) - y(r.d50)}" fill="${r.ndays < 360 ? 'var(--faint)' : 'var(--brand)'}"><title>${r.y}: ${r.d50} días${r.ndays < 360 ? ' (año en curso)' : ''}</title></rect>
+      ${i % 2 === 0 || i === rows.length - 1 ? `<text x="${pad.l + i * bw + bw / 2}" y="${H - 8}" text-anchor="middle">${String(r.y).slice(2)}</text>` : ''}`).join('')}
+  </svg>
+  <p class="small muted">${rows.map((r) => r.y === 2019 || r.y === rows[rows.length - 2]?.y ? `${r.y}: ${r.d50} días` : null).filter(Boolean).join(' · ')}. En gris, el año en curso.</p>`;
+});
+
+lhbox.panel(document.getElementById('p-comp'), async (el) => {
+  const rows = await q(`WITH y AS (SELECT max(year) AS y FROM aire_madrid.now.compliance WHERE year < year(current_date))
+    SELECT c.year, c.rule_set, c.rule_id, c.averaging, c.threshold_ugm3, c.allowed_per_year,
+           CASE c.rule_set WHEN 'eu2008' THEN 1 WHEN 'eu2030' THEN 2 ELSE 3 END AS ord,
+           count(*) AS stations, count(*) FILTER (WHERE c.passes) AS pass
+    FROM aire_madrid.now.compliance c, y WHERE c.year = y.y AND c.rule_id LIKE '%no2%' AND c.rule_set IN ('eu2008', 'eu2030', 'who2021')
+    GROUP BY ALL ORDER BY ord, averaging`);
+  const name = { eu2008: 'UE, en vigor', eu2030: 'UE desde 2030', who2021: 'OMS 2021' };
+  const avg = { hour: 'horaria', day: 'diaria', year: 'anual' };
+  el.innerHTML = `<h3>${rows[0]?.year}: estaciones que cumplen cada norma</h3><div class="tablewrap"><table><thead><tr><th>Norma</th><th>Media</th><th class="n">Límite</th><th class="n">Cumplen</th></tr></thead><tbody>${
+    rows.map((r) => `<tr><td>${name[r.rule_set] ?? r.rule_set}</td><td>${avg[r.averaging] ?? r.averaging}</td><td class="n">${nf(r.threshold_ugm3)}${r.allowed_per_year != null ? ` <span class="muted small">(${r.allowed_per_year}/año)</span>` : ''}</td><td class="n"><span class="chip ${r.pass < r.stations ? 'bad' : ''}">${r.pass} / ${r.stations}</span></td></tr>`).join('')
+  }</tbody></table></div><p class="small muted">Calculado por el catálogo a partir de los datos horarios de la ciudad (sql/now/compliance.sql).</p>`;
+});
+
+// ---------- Replay
+function renderQsel() {
+  document.getElementById('qsel').innerHTML = Object.entries(Q_NAME).map(([k, v]) =>
+    `<button aria-pressed="${state.q === k}" data-q="${k}">${v}</button>`).join('');
+}
+document.getElementById('qsel').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-q]'); if (!b) return;
+  state.q = b.dataset.q; saveState(); renderQsel(); replayPanels();
+});
+function saveState() { lhbox.setState(new URLSearchParams(Object.entries(state).filter(([, v]) => v)).toString()); }
+
+function lineChart(series, { W = 1100, H = 280, yMax, yLabel }) {
+  const pad = { l: 46, r: 10, t: 10, b: 28 };
+  const days = [...new Set(Object.values(series).flat().map((p) => p.d))].sort();
+  const x = (d) => pad.l + (W - pad.l - pad.r) * days.indexOf(d) / Math.max(1, days.length - 1);
+  const y = (v) => pad.t + (H - pad.t - pad.b) * (1 - v / yMax);
+  const ticks = [0, yMax / 4, yMax / 2, 3 * yMax / 4, yMax];
+  const months = days.filter((d) => d.endsWith('-01'));
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(yLabel)}">
+    ${ticks.map((t) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${pad.l - 6}" y="${y(t) + 4}" text-anchor="end">${t.toFixed(2)}</text>`).join('')}
+    ${months.map((d) => `<text x="${x(d)}" y="${H - 8}" text-anchor="middle">${fdate(d, { month: 'short' })}</text>`).join('')}
+    ${Object.entries(series).map(([arm, pts]) => `<path d="${pts.map((p, i) => (i ? 'L' : 'M') + x(p.d).toFixed(1) + ',' + y(Math.min(p.v, yMax)).toFixed(1)).join('')}" fill="none" stroke="${ARM_COLOR[arm]}" stroke-width="${arm === 'record' || arm === 'memory' ? 2.6 : 1.8}"/>`).join('')}
+  </svg>`;
+}
+
+async function replayPanels() {
+  lhbox.panel(document.getElementById('p-curve'), async (el) => {
+    const rows = await q(`SELECT arm, target_day::VARCHAR AS d,
+        avg(brier) OVER (PARTITION BY arm ORDER BY target_day ROWS BETWEEN 29 PRECEDING AND CURRENT ROW) AS v,
+        sum(outcome) OVER (PARTITION BY arm ORDER BY target_day ROWS BETWEEN 29 PRECEDING AND CURRENT ROW) AS ev
+      FROM aire_madrid.agent.replay_forecasts WHERE replay = ? AND question = ? ORDER BY arm, target_day`, [REPLAY, state.q]);
+    if (!rows.length) { el.innerHTML = '<p class="muted">La repetición aún no ha empezado.</p>'; return; }
+    const series = {}; for (const r of rows) (series[r.arm] ??= []).push({ d: r.d, v: r.v });
+    const yMax = Math.max(0.1, Math.ceil(Math.max(...rows.map((r) => r.v)) * 20) / 20);
+    el.innerHTML = `<h3>Puntuación de Brier, media de los 30 días anteriores (${Q_NAME[state.q]})</h3>
+      <div class="legend">${ARMS.filter((a) => series[a]).map((a) => `<span><i style="border-color:${ARM_COLOR[a]}"></i>${ARM_NAME[a]}</span>`).join('')}</div>
+      ${lineChart(series, { yMax, yLabel: 'Brier en ventana de 30 días' })}
+      <p class="small muted">Más bajo es mejor. Hasta el ${fdate(rows[rows.length - 1].d, { day: 'numeric', month: 'long' })}.</p>`;
+  });
+
+  lhbox.panel(document.getElementById('p-scores'), async (el) => {
+    const rows = await q(`SELECT question, arm, count(*) AS n, avg(probability) AS said, avg(outcome) AS happened, avg(brier) AS b
+      FROM aire_madrid.agent.replay_forecasts WHERE replay = ? GROUP BY ALL ORDER BY question, b`, [REPLAY]);
+    const byQ = {}; for (const r of rows) (byQ[r.question] ??= []).push(r);
+    el.innerHTML = `<h3>El invierno entero</h3><div class="tablewrap"><table><thead><tr><th>Pregunta</th><th>Previsor</th><th class="n">Dijo</th><th class="n">Pasó</th><th class="n">Brier</th></tr></thead><tbody>${
+      Object.entries(byQ).map(([qq, rs]) => rs.map((r, i) => `<tr${qq === state.q ? ' style="background:var(--tint)"' : ''}><td>${i ? '' : Q_NAME[qq]}</td><td><span class="dot" style="background:${ARM_COLOR[r.arm]}"></span>${ARM_NAME[r.arm]}</td><td class="n">${nf(r.said * 100)}%</td><td class="n">${nf(r.happened * 100)}%</td><td class="n"><b>${nf(r.b, 3)}</b></td></tr>`).join('')).join('')
+    }</tbody></table></div><p class="small muted">"Dijo": probabilidad media que dio. "Pasó": proporción de días en que ocurrió. Ordenado de mejor a peor.</p>`;
+  });
+
+  lhbox.panel(document.getElementById('p-calib'), async (el) => {
+    const rows = await q(`SELECT arm, least(floor(probability * 5), 4) AS bin, count(*) AS n, avg(outcome) AS hit, avg(probability) AS p
+      FROM aire_madrid.agent.replay_forecasts WHERE replay = ? AND question = ? GROUP BY ALL ORDER BY arm, bin`, [REPLAY, state.q]);
+    const W = 520, H = 260, pad = { l: 40, r: 10, t: 10, b: 30 };
+    const x = (v) => pad.l + (W - pad.l - pad.r) * v, y = (v) => pad.t + (H - pad.t - pad.b) * (1 - v);
+    const series = {}; for (const r of rows) (series[r.arm] ??= []).push(r);
+    el.innerHTML = `<h3>¿Cuando dice 70 %, pasa 7 de cada 10?</h3>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Calibración">
+        ${[0, .25, .5, .75, 1].map((t) => `<line x1="${x(0)}" x2="${x(1)}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${pad.l - 6}" y="${y(t) + 4}" text-anchor="end">${t * 100}%</text><text x="${x(t)}" y="${H - 10}" text-anchor="middle">${t * 100}%</text>`).join('')}
+        <line x1="${x(0)}" y1="${y(0)}" x2="${x(1)}" y2="${y(1)}" stroke="var(--faint)" stroke-dasharray="4 3"/>
+        ${Object.entries(series).map(([arm, pts]) => `<path d="${pts.map((p, i) => (i ? 'L' : 'M') + x(p.p).toFixed(1) + ',' + y(p.hit).toFixed(1)).join('')}" fill="none" stroke="${ARM_COLOR[arm]}" stroke-width="2"/>${pts.map((p) => `<circle cx="${x(p.p)}" cy="${y(p.hit)}" r="${2 + Math.sqrt(p.n)}" fill="${ARM_COLOR[arm]}" fill-opacity=".55"><title>${ARM_NAME[arm]}: dijo ~${nf(p.p * 100)}%, pasó ${nf(p.hit * 100)}% (${p.n} días)</title></circle>`).join('')}`).join('')}
+      </svg><p class="small muted">Horizontal: la probabilidad que dio; vertical: con qué frecuencia pasó. Sobre la diagonal está bien calibrado. El tamaño es el número de días.</p>`;
+  });
+
+  lhbox.panel(document.getElementById('p-daysreplay'), async (el) => {
+    const rows = await q(`PIVOT (SELECT target_day::VARCHAR AS d, arm, probability, outcome, observed_worst_mean
+        FROM aire_madrid.agent.replay_forecasts WHERE replay = ? AND question = ?)
+      ON arm USING first(probability) GROUP BY d, outcome, observed_worst_mean ORDER BY d`, [REPLAY, state.q]);
+    const arms = ARMS.filter((a) => rows.length && a in rows[0]);
+    const cell = (p, o) => p == null ? '<td class="n muted">–</td>' : `<td class="n" style="background:rgb(${o ? '194 65 12' : '20 99 224'} / ${(Math.abs(p - o) * 0.35).toFixed(2)})">${nf(p * 100)}%</td>`;
+    el.innerHTML = `<details><summary><h3 style="display:inline">Cada día de la repetición (${rows.length})</h3></summary>
+      <div class="tablewrap" style="max-height:480px;overflow-y:auto;margin-top:10px"><table><thead><tr><th>Día</th><th>Pasó</th><th class="n">Peor media</th>${arms.map((a) => `<th class="n">${ARM_NAME[a]}</th>`).join('')}</tr></thead><tbody>${
+        rows.map((r) => `<tr><td>${fdate(r.d)}</td><td>${r.outcome ? '<span class="chip bad">sí</span>' : '<span class="chip n">no</span>'}</td><td class="n">${nf(r.observed_worst_mean, 1)}</td>${arms.map((a) => cell(r[a], r.outcome)).join('')}</tr>`).join('')
+      }</tbody></table></div><p class="small muted">El color marca el error: cuanto más intenso, más lejos estuvo la probabilidad de lo que pasó.</p>
+      <button class="btn" id="csv">Descargar CSV</button></details>`;
+    el.querySelector('#csv').addEventListener('click', () => {
+      const head = ['day', 'happened', 'worst_daily_mean', ...arms];
+      const csv = [head.join(',')].concat(rows.map((r) => [r.d, r.outcome, r.observed_worst_mean, ...arms.map((a) => r[a] ?? '')].join(','))).join('\n');
+      lhbox.download(`aire-madrid-replay-${state.q}.csv`, csv);
+    });
+  });
+}
+
+function notebook() {
+lhbox.panel(document.getElementById('p-notebook'), async (el) => {
+  const rows = await q(`SELECT day::VARCHAR AS day, lessons, note FROM aire_madrid.agent.replay_memory WHERE replay = ? ORDER BY day`, [REPLAY]);
+  if (!rows.length) { el.innerHTML = '<p class="muted">El cuaderno aún está vacío.</p>'; return; }
+  let i = state.d ? Math.max(0, rows.findIndex((r) => r.day >= state.d)) : rows.length - 1;
+  const show = () => {
+    const r = rows[i]; let ls = [];
+    try { ls = JSON.parse(r.lessons); } catch { ls = []; }
+    el.querySelector('#nbday').textContent = fdate(r.day, { weekday: 'long', day: 'numeric', month: 'long' });
+    el.querySelector('#nblist').innerHTML = ls.map((s) => `<li>${esc(s)}</li>`).join('') || '<li class="muted">(vacío)</li>';
+    el.querySelector('#nbnote').textContent = r.note ?? '';
+  };
+  el.innerHTML = `<div class="sechead" style="margin:0"><h3>El cuaderno del previsor, día a día</h3><span class="muted small">Lo que se escribió a sí mismo tras ver cómo le fue</span></div>
+    <input type="range" min="0" max="${rows.length - 1}" value="${i}" id="nbr" aria-label="Día">
+    <div class="label" id="nbday" style="margin-top:6px"></div>
+    <ol id="nblist"></ol><div class="note" id="nbnote"></div>`;
+  el.querySelector('#nbr').addEventListener('input', (e) => { i = +e.target.value; state.d = rows[i].day; show(); });
+  el.querySelector('#nbr').addEventListener('change', saveState);
+  show();
+});
+}
+
+const { state: s0 } = await lhbox.ready().catch(() => ({ state: '' }));
+if (s0) { const p = new URLSearchParams(s0); state.q = Q_NAME[p.get('q')] ? p.get('q') : state.q; state.d = p.get('d'); }
+renderQsel();
+replayPanels();
+notebook();
+lhbox.onState((s) => { const p = new URLSearchParams(s || ''); if (Q_NAME[p.get('q')]) { state.q = p.get('q'); renderQsel(); replayPanels(); } });
+</script>
+</body>
+</html>
