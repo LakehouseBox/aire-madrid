@@ -36,6 +36,7 @@ catalogs:
       now_daily_station:      { table: now.daily_station,      sql: sql/now/daily_station.sql,      every: 1h, offset: 35m, mode: replace, min_rows: 100, format_version: 2 }
       now_daily_city:         { table: now.daily_city,         sql: sql/now/daily_city.sql,         every: 1h, offset: 40m, mode: replace, min_rows: 1,   format_version: 2 }
       now_compliance:         { table: now.compliance,         sql: sql/now/compliance.sql,         every: 1d, offset: 420m, mode: replace, min_rows: 1,   format_version: 2 }
+      now_daily_weather:      { table: now.daily_weather,      sql: sql/now/daily_weather.sql,      every: 1h, offset: 30m, mode: replace, min_rows: 100, format_version: 2 }
       now_scored_predictions: { table: now.scored_predictions, sql: sql/now/scored_predictions.sql, every: 1h, offset: 45m, mode: replace, format_version: 2 }
 
     agents:
