@@ -44,6 +44,32 @@ runs next to the data, on a schedule. Every day at 12:00 Madrid time it:
 
 Its forecasts, its scores and its memory are tables in the catalog, so whether it is getting better is a query.
 
+## Does it learn? The replay
+
+A live agent needs months to show a learning curve, so [`tools/replay.py`](tools/replay.py) replays a past winter
+(1 October 2024 to 31 March 2025) day by day. Each day at "noon", four forecasters predict tomorrow from what was known
+then, with the agent's own model:
+
+- **persistence**: a fixed rule, no model (how often a day like yesterday was followed by an event in the last 28 days);
+- **fresh**: the model, with no memory;
+- **notebook**: the model plus a notebook of lessons it rewrites every day after seeing how it did;
+- **record**: the model plus a table computed from its own scored forecasts (its calibration, and what it said and
+  what happened on past days most like tomorrow): memory as a query, not as prose.
+
+Each answers three questions: some station above 50 µg/m³ (the EU 2030 daily limit), five or more stations above 50,
+and the parking surcharge. Each is scored with the Brier score. Each forecaster only sees outcomes of days already over
+at noon. The year is hidden from the model. Tomorrow's weather is given as measured: a perfect forecast, the same for
+all four. Results go to `agent.replay_forecasts` and `agent.replay_memory`
+([`tools/replay_load.py`](tools/replay_load.py)).
+
+## The page
+
+[`artifact/`](artifact) is a LakehouseBox artifact: one HTML file whose SQL runs in the reader's browser against the
+catalog. It shows today (the last days and the agent's forecast), Madrid under the 2030 rules, and the replay (the
+learning curve, calibration, the notebook day by day, every day's forecasts as a table and CSV). CI publishes it on
+every change ([`.github/workflows/artifact.yml`](.github/workflows/artifact.yml)).
+[`tools/check_page.sh`](tools/check_page.sh) runs the page's script in Node against the catalog before publishing.
+
 ## What's in the catalog
 
 | Namespace | What |
@@ -51,7 +77,7 @@ Its forecasts, its scores and its memory are tables in the catalog, so whether i
 | `ref` | `stations` (24, with the protocol zone), `magnitudes` (pollutant codes), `rules` (every rule set as data), `past_episodes` (the council's decisions 2017-2021, day by day) |
 | `obs` | `air_hourly` (since 2010, live), `meteo_hourly`, `traffic` (~4,900 points every 5 min), `protocol_feed` (the council's live protocol state), `weather_forecast` (AEMET, every issue kept) |
 | `now` | rebuilt inside LakehouseBox: `daily_station`, `daily_city` (the city under every rule set, each day), `compliance` (each year, station and rule), `scored_predictions` |
-| `agent` | `predictions` |
+| `agent` | `predictions` (the live agent), `replay_forecasts` and `replay_memory` (the replay) |
 
 [`docs/AGENTS.md`](docs/AGENTS.md) explains every table for an agent; LakehouseBox serves it at the catalog root.
 
