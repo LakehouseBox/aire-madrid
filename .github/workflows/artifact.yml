@@ -1,0 +1,25 @@
+# The page is a LakehouseBox artifact (artifact/), published as its next version on every change to main.
+name: Artifact
+on:
+  push:
+    branches: [main]
+    paths: ['artifact/**', '.github/workflows/artifact.yml']
+  workflow_dispatch:
+concurrency: { group: artifact, cancel-in-progress: false }
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      LHBOX_API_KEY: ${{ secrets.LHBOX_API_KEY }}
+      LHBOX_NO_VERSION_CHECK: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install lhbox
+        run: curl -fsSL https://lakehousebox.com/install.sh | sh && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      # Packets over 1,472 bytes from GitHub's runners to the API are lost on the way (tablemere/tablemere#2598).
+      - name: Smaller packets
+        run: sudo ip link set dev eth0 mtu 1400
+      - name: Publish
+        run: |
+          if [ -z "$LHBOX_API_KEY" ]; then echo "::warning::LHBOX_API_KEY is not set: the artifact was not published."; exit 0; fi
+          lhbox artifact publish artifact --note "$(git log -1 --format=%s | cut -c1-200)"
