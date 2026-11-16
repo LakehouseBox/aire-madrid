@@ -15,7 +15,7 @@ Honest limits, written into the results: the weather for tomorrow is what was me
 year is hidden from the model, but the month and weekday are not.
 
   python3 tools/replay.py --days data/replay_days.parquet --out data/replay --from 2024-10-01 --to 2025-03-31
-The model and its key are the agent service's (DeepSeek-V4-Flash on Scaleway): LHBOX_REPLAY_BASE_URL, _KEY.
+The model and its key are the agent service's (DeepSeek-V4-Flash, any OpenAI-compatible endpoint): LHBOX_REPLAY_BASE_URL, _KEY.
 """
 import argparse, concurrent.futures as cf, datetime as dt, json, os, re, sys, time, urllib.request
 

@@ -37,7 +37,7 @@ jobs:
       - name: Install lhbox
         run: curl -fsSL https://lakehousebox.com/install.sh | sh && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       # Full-size (1500-byte) packets from GitHub's Azure runners to the API are lost on the way and nothing
-      # reports it (a path MTU black hole, tablemere/tablemere#3204); a smaller MTU on the runner avoids it.
+      # reports it (a path MTU black hole); a smaller MTU on the runner avoids it.
       - name: Smaller packets
         run: sudo ip link set dev eth0 mtu 1400
       - name: Reach the API

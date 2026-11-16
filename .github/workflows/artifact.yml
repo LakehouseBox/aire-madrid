@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install lhbox
         run: curl -fsSL https://lakehousebox.com/install.sh | sh && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-      # Packets over 1,472 bytes from GitHub's runners to the API are lost on the way (tablemere/tablemere#2598).
+      # Packets over 1,472 bytes from GitHub's runners to the API are lost on the way.
       - name: Smaller packets
         run: sudo ip link set dev eth0 mtu 1400
       - name: Publish
