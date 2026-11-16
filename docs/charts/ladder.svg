@@ -1,20 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
-<rect width="720" height="300" fill="#fff"/>
-<text x="20.0" y="30.0" font-size="15" fill="#1d2733" text-anchor="start" font-weight="600">Less error than no memory, by what the forecaster keeps</text>
-<text x="238.0" y="82.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">No memory</text>
-<rect x="250" y="60" width="3.8" height="34" fill="#9cc3e8" rx="3"/>
-<text x="258.0" y="82.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">baseline (Brier 0.168)</text>
-<text x="238.0" y="128.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">Notes it rewrites daily</text>
-<rect x="250" y="106" width="160.8" height="34" fill="#9cc3e8" rx="3"/>
-<text x="418.8" y="128.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">8%  (Brier 0.154)</text>
-<text x="238.0" y="174.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">Its record, forgotten monthly</text>
-<rect x="250" y="152" width="170.2" height="34" fill="#9cc3e8" rx="3"/>
-<text x="428.2" y="174.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">9%  (Brier 0.153)</text>
-<text x="238.0" y="220.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">Its record, kept</text>
-<rect x="250" y="198" width="242.4" height="34" fill="#2f7fd0" rx="3"/>
-<text x="500.4" y="220.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">13%  (Brier 0.146)</text>
-<text x="238.0" y="266.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">Its record + the city's tables</text>
-<rect x="250" y="244" width="335.0" height="34" fill="#2f7fd0" rx="3"/>
-<text x="593.0" y="266.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">18%  (Brier 0.138)</text>
-<text x="20.0" y="290.0" font-size="11" fill="#6b7785" text-anchor="start" font-weight="400">Madrid, "some station above 50 tomorrow", 182 days, winter 2024-25, the same model throughout.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+<text x="20.0" y="34.0" font-size="22" fill="#1a1917" text-anchor="start" font-weight="700" >The more it can query, the less it gets wrong</text>
+<text x="20.0" y="60.0" font-size="14" fill="#77706a" text-anchor="start" font-weight="400" >Error removed, compared with the same model with no memory</text>
+<text x="314.0" y="110.0" font-size="16" fill="#1a1917" text-anchor="end" font-weight="600" >No memory</text>
+<text x="314.0" y="130.0" font-size="12" fill="#77706a" text-anchor="end" font-weight="400" >every day from zero</text>
+<rect x="330" y="90" width="4.0" height="46" fill="#e5ded4" rx="5"/>
+<text x="346.0" y="120.0" font-size="15" fill="#77706a" text-anchor="start" font-weight="400" >the baseline</text>
+<text x="314.0" y="178.0" font-size="16" fill="#1a1917" text-anchor="end" font-weight="600" >Notes</text>
+<text x="314.0" y="198.0" font-size="12" fill="#77706a" text-anchor="end" font-weight="400" >lessons it rewrites daily</text>
+<rect x="330" y="158" width="203.1" height="46" fill="#9cc3e8" rx="5"/>
+<text x="545.1" y="188.0" font-size="15" fill="#1a1917" text-anchor="start" font-weight="400" >8% less error</text>
+<text x="314.0" y="246.0" font-size="16" fill="#1a1917" text-anchor="end" font-weight="600" >Its record, wiped monthly</text>
+<text x="314.0" y="266.0" font-size="12" fill="#77706a" text-anchor="end" font-weight="400" >the person or project changes</text>
+<rect x="330" y="226" width="214.9" height="46" fill="#9cc3e8" rx="5"/>
+<text x="556.9" y="256.0" font-size="15" fill="#1a1917" text-anchor="start" font-weight="400" >9% less error</text>
+<text x="314.0" y="314.0" font-size="16" fill="#1a1917" text-anchor="end" font-weight="600" >Its record, kept</text>
+<text x="314.0" y="334.0" font-size="12" fill="#77706a" text-anchor="end" font-weight="400" >a query over its own scored forecasts</text>
+<rect x="330" y="294" width="306.2" height="46" fill="#4f98dc" rx="5"/>
+<text x="648.2" y="324.0" font-size="15" fill="#1a1917" text-anchor="start" font-weight="700" >13% less error</text>
+<text x="314.0" y="382.0" font-size="16" fill="#1a1917" text-anchor="end" font-weight="600" >Its record + the city's tables</text>
+<text x="314.0" y="402.0" font-size="12" fill="#77706a" text-anchor="end" font-weight="400" >three years of days like tomorrow</text>
+<rect x="330" y="362" width="423.2" height="46" fill="#e0471c" rx="5"/>
+<text x="765.2" y="392.0" font-size="15" fill="#1a1917" text-anchor="start" font-weight="700" >18% less error</text>
+<text x="20.0" y="458.0" font-size="12" fill="#77706a" text-anchor="start" font-weight="400" >Brier score. Madrid, "will some station exceed 50 tomorrow?", 182 days, winter 2024-25, the same model throughout.</text>
 </svg>

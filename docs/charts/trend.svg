@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+<text x="20.0" y="34.0" font-size="22" fill="#1a1917" text-anchor="start" font-weight="700" >Madrid's air keeps getting cleaner</text>
+<text x="20.0" y="60.0" font-size="14" fill="#77706a" text-anchor="start" font-weight="400" >Days in the year when some station averaged more than 50 µg/m³ of NO2</text>
+<line x1="70" y1="380.0" x2="930" y2="380.0" stroke="#1a1917" stroke-width="2"/>
+<text x="60.0" y="385.0" font-size="13" fill="#77706a" text-anchor="end" font-weight="400" >0</text>
+<line x1="70" y1="295.6" x2="930" y2="295.6" stroke="#e5ded4" stroke-width="1"/>
+<text x="60.0" y="300.6" font-size="13" fill="#77706a" text-anchor="end" font-weight="400" >100</text>
+<line x1="70" y1="211.2" x2="930" y2="211.2" stroke="#e5ded4" stroke-width="1"/>
+<text x="60.0" y="216.2" font-size="13" fill="#77706a" text-anchor="end" font-weight="400" >200</text>
+<line x1="70" y1="126.9" x2="930" y2="126.9" stroke="#e5ded4" stroke-width="1"/>
+<text x="60.0" y="131.9" font-size="13" fill="#77706a" text-anchor="end" font-weight="400" >300</text>
+<rect x="76.0" y="119.3" width="41.8" height="260.7" fill="#9cc3e8" rx="3"/>
+<text x="96.9" y="402.0" font-size="12" fill="#1a1917" text-anchor="middle" font-weight="700" >2010</text>
+<text x="96.9" y="111.3" font-size="14" fill="#1a1917" text-anchor="middle" font-weight="700" >309</text>
+<rect x="129.8" y="127.7" width="41.8" height="252.3" fill="#9cc3e8" rx="3"/>
+<text x="150.6" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >11</text>
+<rect x="183.5" y="172.4" width="41.8" height="207.6" fill="#9cc3e8" rx="3"/>
+<text x="204.4" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >12</text>
+<rect x="237.2" y="202.8" width="41.8" height="177.2" fill="#9cc3e8" rx="3"/>
+<text x="258.1" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >13</text>
+<rect x="291.0" y="193.5" width="41.8" height="186.5" fill="#9cc3e8" rx="3"/>
+<text x="311.9" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >14</text>
+<rect x="344.8" y="168.2" width="41.8" height="211.8" fill="#9cc3e8" rx="3"/>
+<text x="365.6" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >15</text>
+<rect x="398.5" y="163.2" width="41.8" height="216.8" fill="#9cc3e8" rx="3"/>
+<text x="419.4" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >16</text>
+<rect x="452.2" y="142.1" width="41.8" height="237.9" fill="#9cc3e8" rx="3"/>
+<text x="473.1" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >17</text>
+<rect x="506.0" y="171.6" width="41.8" height="208.4" fill="#9cc3e8" rx="3"/>
+<text x="526.9" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >18</text>
+<rect x="559.8" y="210.4" width="41.8" height="169.6" fill="#9cc3e8" rx="3"/>
+<text x="580.6" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >19</text>
+<text x="580.6" y="202.4" font-size="14" fill="#1a1917" text-anchor="middle" font-weight="700" >201</text>
+<rect x="613.5" y="271.2" width="41.8" height="108.8" fill="#9cc3e8" rx="3"/>
+<text x="634.4" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >20</text>
+<rect x="667.2" y="293.9" width="41.8" height="86.1" fill="#9cc3e8" rx="3"/>
+<text x="688.1" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >21</text>
+<rect x="721.0" y="294.8" width="41.8" height="85.2" fill="#4f98dc" rx="3"/>
+<text x="741.9" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >22</text>
+<text x="741.9" y="286.8" font-size="14" fill="#1a1917" text-anchor="middle" font-weight="700" >101</text>
+<rect x="774.8" y="291.4" width="41.8" height="88.6" fill="#4f98dc" rx="3"/>
+<text x="795.6" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >23</text>
+<rect x="828.5" y="321.8" width="41.8" height="58.2" fill="#4f98dc" rx="3"/>
+<text x="849.4" y="402.0" font-size="12" fill="#77706a" text-anchor="middle" font-weight="400" >24</text>
+<rect x="882.2" y="334.4" width="41.8" height="45.6" fill="#4f98dc" rx="3"/>
+<text x="903.1" y="402.0" font-size="12" fill="#1a1917" text-anchor="middle" font-weight="700" >2025</text>
+<text x="903.1" y="326.4" font-size="14" fill="#1a1917" text-anchor="middle" font-weight="700" >54</text>
+<line x1="70" y1="364.8" x2="930" y2="364.8" stroke="#e0471c" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="80.0" y="355.8" font-size="14" fill="#e0471c" text-anchor="start" font-weight="700" paint-order="stroke" stroke="#fff" stroke-width="5" stroke-linejoin="round">the EU's limit from 2030: 18 days a year</text>
+<line x1="715.0" y1="120" x2="715.0" y2="288.9" stroke="#4f4a44" stroke-width="1.5" stroke-dasharray="3 4"/>
+<text x="723.0" y="134.0" font-size="13" fill="#4f4a44" text-anchor="start" font-weight="600" >since 2022, every station</text>
+<text x="723.0" y="152.0" font-size="13" fill="#4f4a44" text-anchor="start" font-weight="600" >meets today's EU limits</text>
+<text x="20.0" y="468.0" font-size="12" fill="#77706a" text-anchor="start" font-weight="400" >Madrid's air quality network, daily mean per station. Computed from the city's open data in the catalog.</text>
+</svg>

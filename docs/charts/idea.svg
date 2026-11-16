@@ -1,14 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
-<rect width="720" height="360" fill="#fff"/>
-<line x1="60" y1="300" x2="690" y2="300" stroke="#1d2733" stroke-width="2"/>
-<line x1="60" y1="300" x2="60" y2="40" stroke="#1d2733" stroke-width="2"/>
-<text x="690.0" y="324.0" font-size="13" fill="#6b7785" text-anchor="end" font-weight="400">time</text>
-<text x="50.0" y="44.0" font-size="12" fill="#6b7785" text-anchor="end" font-weight="400">what the</text>
-<text x="50.0" y="60.0" font-size="12" fill="#6b7785" text-anchor="end" font-weight="400">analysis</text>
-<text x="50.0" y="76.0" font-size="12" fill="#6b7785" text-anchor="end" font-weight="400">knows</text>
-<polyline points="70,250 200,190 200,190 200,250 220,250 350,184 350,184 350,250 370,250 500,178 500,178 500,250 520,250 650,172 650,172" fill="none" stroke="#d9534f" stroke-width="3" stroke-linejoin="round"/>
-<path d="M70 240 C 280 200, 480 120, 680 70" fill="none" stroke="#2f7fd0" stroke-width="3.5"/>
-<text x="680.0" y="60.0" font-size="14" fill="#2f7fd0" text-anchor="end" font-weight="600">agents that keep their record in tables</text>
-<text x="680.0" y="78.0" font-size="12" fill="#6b7785" text-anchor="end" font-weight="400">every run starts where the last one ended</text>
-<text x="80.0" y="276.0" font-size="13" fill="#d9534f" text-anchor="start" font-weight="600">people and projects: each one learns, then the knowledge leaves with them</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+<defs><marker id="a-1a1917" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1a1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<line x1="90.0" y1="410.0" x2="920.0" y2="410.0" stroke="#1a1917" stroke-width="2"  marker-end="url(#a-1a1917)" stroke-linecap="round"/>
+<line x1="90.0" y1="410.0" x2="90.0" y2="60.0" stroke="#1a1917" stroke-width="2"  marker-end="url(#a-1a1917)" stroke-linecap="round"/>
+<text x="920.0" y="440.0" font-size="15" fill="#77706a" text-anchor="end" font-weight="400" >time</text>
+<text x="76.0" y="80.0" font-size="14" fill="#77706a" text-anchor="end" font-weight="400" >what the</text>
+<text x="76.0" y="98.0" font-size="14" fill="#77706a" text-anchor="end" font-weight="400" >analysis</text>
+<text x="76.0" y="116.0" font-size="14" fill="#77706a" text-anchor="end" font-weight="400" >knows</text>
+<path d="M110 330 Q 220 328, 280 250 L 280 330 Q 420 328, 480 246 L 480 330 Q 620 328, 680 242 L 680 330 Q 820 328, 880 238" fill="none" stroke="#4f4a44" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="280" cy="250" r="5" fill="#fff" stroke="#4f4a44" stroke-width="2.5"/>
+<circle cx="480" cy="246" r="5" fill="#fff" stroke="#4f4a44" stroke-width="2.5"/>
+<circle cx="680" cy="242" r="5" fill="#fff" stroke="#4f4a44" stroke-width="2.5"/>
+<text x="292.0" y="240.0" font-size="13" fill="#77706a" text-anchor="start" font-weight="400" >someone moves on</text>
+<path d="M110 318 C 420 300, 650 190, 880 92" fill="none" stroke="#e0471c" stroke-width="5" stroke-linecap="round"/>
+<text x="880.0" y="70.0" font-size="18" fill="#e0471c" text-anchor="end" font-weight="700" >Agents that keep what they learn in tables</text>
+<text x="670.0" y="150.0" font-size="14" fill="#e0471c" text-anchor="end" font-weight="400" >every run starts where the last one ended</text>
+<text x="114.0" y="372.0" font-size="18" fill="#4f4a44" text-anchor="start" font-weight="700" >People and projects</text>
+<text x="114.0" y="394.0" font-size="14" fill="#77706a" text-anchor="start" font-weight="400" >each one learns, then the knowledge leaves with them</text>
 </svg>
