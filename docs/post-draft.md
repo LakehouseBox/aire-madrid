@@ -80,6 +80,20 @@ its first month, its error was 0.096 against 0.153 with no memory. It was also t
 "almost never" rule on the rarest question we asked, the parking surcharge, which happened twice all winter. Its own
 record could not teach it something that rare; three years of the city's history could.
 
+## Memory is how an agent calibrates
+
+A forecaster is calibrated when its numbers mean what they say: of all the days it says 70%, it happens on about 70
+of 100. A model on its own is not. With no memory, on the days ours said "40 to 60%", the event happened on 2 of 15. It
+had no way to find out.
+
+An agent with a record does. When it reads "when you said 60 to 80%, it happened 22 times in 39", it adjusts. Every
+forecaster with a memory was better calibrated than the one without, whatever kind of memory it was: the gap between
+what it said and what happened fell by between a third and four fifths. This is what an experienced analyst does too: they learn how far to trust their own numbers. The agent does it by query.
+
+Calibration is most of what its own record bought, and it is why that gain arrived in weeks and then stopped: once
+the numbers are honest, more record does not make them more so. The city's tables added something different. With
+them the forecaster also got better at telling a bad day from a clean one, which no amount of self-correction gives.
+
 ## What this means
 
 The gain did not come from a smarter model. All five forecasters used the same one. It came from what each was
