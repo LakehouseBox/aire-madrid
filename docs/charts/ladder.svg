@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
+<rect width="720" height="300" fill="#fff"/>
+<text x="20.0" y="30.0" font-size="15" fill="#1d2733" text-anchor="start" font-weight="600">Less error than no memory, by what the forecaster keeps</text>
+<text x="238.0" y="82.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">No memory</text>
+<rect x="250" y="60" width="3.8" height="34" fill="#9cc3e8" rx="3"/>
+<text x="258.0" y="82.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">baseline (Brier 0.168)</text>
+<text x="238.0" y="128.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">Notes it rewrites daily</text>
+<rect x="250" y="106" width="160.8" height="34" fill="#9cc3e8" rx="3"/>
+<text x="418.8" y="128.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">8%  (Brier 0.154)</text>
+<text x="238.0" y="174.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">Its record, forgotten monthly</text>
+<rect x="250" y="152" width="170.2" height="34" fill="#9cc3e8" rx="3"/>
+<text x="428.2" y="174.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">9%  (Brier 0.153)</text>
+<text x="238.0" y="220.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">Its record, kept</text>
+<rect x="250" y="198" width="242.4" height="34" fill="#2f7fd0" rx="3"/>
+<text x="500.4" y="220.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">13%  (Brier 0.146)</text>
+<text x="238.0" y="266.0" font-size="13" fill="#1d2733" text-anchor="end" font-weight="400">Its record + the city's tables</text>
+<rect x="250" y="244" width="335.0" height="34" fill="#2f7fd0" rx="3"/>
+<text x="593.0" y="266.0" font-size="12" fill="#6b7785" text-anchor="start" font-weight="400">18%  (Brier 0.138)</text>
+<text x="20.0" y="290.0" font-size="11" fill="#6b7785" text-anchor="start" font-weight="400">Madrid, "some station above 50 tomorrow", 182 days, winter 2024-25, the same model throughout.</text>
+</svg>

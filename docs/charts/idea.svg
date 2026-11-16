@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
+<rect width="720" height="360" fill="#fff"/>
+<line x1="60" y1="300" x2="690" y2="300" stroke="#1d2733" stroke-width="2"/>
+<line x1="60" y1="300" x2="60" y2="40" stroke="#1d2733" stroke-width="2"/>
+<text x="690.0" y="324.0" font-size="13" fill="#6b7785" text-anchor="end" font-weight="400">time</text>
+<text x="50.0" y="44.0" font-size="12" fill="#6b7785" text-anchor="end" font-weight="400">what the</text>
+<text x="50.0" y="60.0" font-size="12" fill="#6b7785" text-anchor="end" font-weight="400">analysis</text>
+<text x="50.0" y="76.0" font-size="12" fill="#6b7785" text-anchor="end" font-weight="400">knows</text>
+<polyline points="70,250 200,190 200,190 200,250 220,250 350,184 350,184 350,250 370,250 500,178 500,178 500,250 520,250 650,172 650,172" fill="none" stroke="#d9534f" stroke-width="3" stroke-linejoin="round"/>
+<path d="M70 240 C 280 200, 480 120, 680 70" fill="none" stroke="#2f7fd0" stroke-width="3.5"/>
+<text x="680.0" y="60.0" font-size="14" fill="#2f7fd0" text-anchor="end" font-weight="600">agents that keep their record in tables</text>
+<text x="680.0" y="78.0" font-size="12" fill="#6b7785" text-anchor="end" font-weight="400">every run starts where the last one ended</text>
+<text x="80.0" y="276.0" font-size="13" fill="#d9534f" text-anchor="start" font-weight="600">people and projects: each one learns, then the knowledge leaves with them</text>
+</svg>

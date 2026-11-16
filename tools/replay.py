@@ -132,9 +132,40 @@ def is_off(d, hol):
     return d.weekday() >= 5 or d in hol
 
 
-def record_view(rows, days, hol, t, known_until):
-    """What the record arm sees: its own scored forecasts, as a table query would return them. No model call."""
-    known = [r for r in rows if r["target_day"] <= str(known_until)]
+def history_view(hist, days, hol, t, known_until):
+    """What the history arm adds: the city's own past (since 2019, up to yesterday), the days most like tomorrow and
+    what happened on them. Knowledge the organisation already holds in its tables, before any forecast of its own."""
+    w = days[t]
+    past = [r for r in hist if r["day"] <= known_until] + [days[x] for x in days if x <= known_until and x not in
+                                                          {r["day"] for r in hist}]
+    def near_month(x):   # within a month of the date, in the last three years (NO2 has fallen year after year)
+        return (min(abs(x.month - t.month), 12 - abs(x.month - t.month)) <= 1
+                and x > known_until - dt.timedelta(days=3 * 365))
+    def dist(x):
+        return (abs((x["wind_ms"] or 0) - (w["wind_ms"] or 0)) / 0.7
+                + 1.5 * (((x["rain_mm"] or 0) > 0.5) != ((w["rain_mm"] or 0) > 0.5))
+                + abs(((x["temp_max_c"] or 0) - (x["temp_min_c"] or 0)) - ((w["temp_max_c"] or 0) - (w["temp_min_c"] or 0))) / 4
+                + 1.0 * (is_off(x["day"], hol) != is_off(t, hol)))
+    cand = sorted((x for x in past if near_month(x["day"]) and x["stations_over_eu2030_day"] is not None), key=dist)[:30]
+    if not cand:
+        return ""
+    n_any = sum(x["stations_over_eu2030_day"] > 0 for x in cand)
+    n_five = sum(x["stations_over_eu2030_day"] >= 5 for x in cand)
+    n_ser = sum((x["ser_background_mean"] or 0) > 60 for x in cand)
+    out = ["The city's history (its tables): on the %d days of the last three years most like tomorrow (weather, "
+           "weekday or holiday, within a month of the date), some station was over 50 on %d, five or more on %d, the background "
+           "mean over 60 on %d. The ten closest:" % (len(cand), n_any, n_five, n_ser)]
+    for x in cand[:10]:
+        out.append("- %s %s: wind %s, rain %s, temp %s..%s | stations over 50: %s, worst mean %s"
+                   % (x["weekday"][:3], x["day"].strftime("%d %b %Y"), x["wind_ms"], x["rain_mm"], x["temp_min_c"],
+                      x["temp_max_c"], x["stations_over_eu2030_day"], x["worst_daily_mean"]))
+    return "\n".join(out)
+
+
+def record_view(rows, days, hol, t, known_until, since=None):
+    """What the record arm sees: its own scored forecasts, as a table query would return them. No model call.
+    since: forget everything made before this day (the reset arm: a new analyst who starts from nothing)."""
+    known = [r for r in rows if r["target_day"] <= str(known_until) and (since is None or r["made_on"] >= str(since))]
     if len(known) < 7:
         return "Your record: fewer than 7 scored forecasts so far."
     out = ["Your record, computed from the table of your own past forecasts and what happened (%d scored days):" % len(known)]
@@ -177,7 +208,8 @@ def main():
     ap.add_argument("--out", default="data/replay")
     ap.add_argument("--from", dest="lo", default="2024-10-01")
     ap.add_argument("--to", dest="hi", default="2025-03-31")
-    ap.add_argument("--arms", default="persistence,fresh,memory", help="any of persistence,fresh,memory,record")
+    ap.add_argument("--arms", default="persistence,fresh,memory", help="any of persistence,fresh,memory,record,reset,history")
+    ap.add_argument("--history", default="data/history_days.parquet", help="the city's past days, for the history arm")
     a = ap.parse_args()
     arms = set(a.arms.split(","))
     base, key = os.environ["LHBOX_REPLAY_BASE_URL"].rstrip("/"), os.environ["LHBOX_REPLAY_KEY"]
@@ -192,7 +224,11 @@ def main():
     os.makedirs(a.out, exist_ok=True)
     fpath, mpath = os.path.join(a.out, "forecasts.jsonl"), os.path.join(a.out, "memory.jsonl")
     done = set()
-    rows = {"fresh": [], "memory": [], "persistence": [], "record": []}
+    rows = {"fresh": [], "memory": [], "persistence": [], "record": [], "reset": [], "history": []}
+    hist = []
+    if "history" in arms:
+        hc = [c[0] for c in con.execute("DESCRIBE SELECT * FROM read_parquet(?)", [a.history]).fetchall()]
+        hist = [dict(zip(hc, r)) for r in con.execute("SELECT * FROM read_parquet(?)", [a.history]).fetchall()]
     if os.path.exists(fpath):                                  # resume: keep what is there
         for l in open(fpath):
             r = json.loads(l); rows[r["arm"]].append(r); done.add((r["arm"], r["made_on"]))
@@ -222,7 +258,13 @@ def main():
             lessons = [str(s)[:300] for s in (res.get("lessons") or [])][:12]
             mf.write(json.dumps({"day": str(d), "lessons": lessons, "note": res.get("note")}) + "\n"); mf.flush()
         jobs = {}
-        with cf.ThreadPoolExecutor(3) as ex:
+        with cf.ThreadPoolExecutor(5) as ex:
+            if "reset" in arms and ("reset", str(d)) not in done:     # the record, forgotten on the 1st of each month
+                jobs["reset"] = ex.submit(call, base, key, SYSTEM,
+                                          record_view(rows["reset"], days, hol, t, y, since=d.replace(day=1)) + "\n\n" + b)
+            if "history" in arms and ("history", str(d)) not in done:   # the record plus the city's past
+                jobs["history"] = ex.submit(call, base, key, SYSTEM, record_view(rows["history"], days, hol, t, y)
+                                            + "\n\n" + history_view(hist, days, hol, t, y) + "\n\n" + b)
             if "record" in arms and ("record", str(d)) not in done:
                 jobs["record"] = ex.submit(call, base, key, SYSTEM,
                                            record_view(rows["record"], days, hol, t, y) + "\n\n" + b)

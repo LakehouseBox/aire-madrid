@@ -1,130 +1,120 @@
 ---
-title: "Does an agent get better at its job? We replayed a Madrid winter to find out"
-description: "An agent forecasts Madrid's nitrogen dioxide the day before, at the hour the city must announce traffic restrictions. Four forecasters, one winter, 182 days: what memory helped, and what it didn't."
+title: "Always-learning analytics: why agents don't have to start over"
+description: "Analytics run by people learns slowly and then forgets when the person or the project moves on. We gave an agent a real daily job, Madrid's air, and measured what keeping its knowledge in tables is worth."
 date: 2026-11-16
 author: Javier de la Torre
 category: Agents
 draft: true
+image: /assets/blog/always-learning-idea.svg
+image_alt: "Two lines over time: a red sawtooth that rises and falls back as people and projects change, and a blue line that keeps rising."
 resources: "The code|https://github.com/lakehousebox/aire-madrid; The page|<artifact link once public>"
 ---
 
-Madrid has not activated its nitrogen dioxide (NO2) protocol since December 2021. In 2025 every one of its 23 stations
-met the EU limits in force. From 2030 the limits get much stricter. The EU's new directive allows a station's
-daily mean above 50 µg/m³ on at most 18 days a year. In 2025 some station in Madrid went over 50 on 54 days; in 2019
-it was 201. Seventeen of the 23 stations would have passed the 2030 daily rule in 2025, and six the annual one. Under
-the WHO's guidelines, none.
+Every analytics team knows this curve. Someone builds a model, a dashboard or a forecast. Over months they learn
+where it goes wrong and correct it. Then they move to another project, or leave, and what they learned leaves with
+them. The next person starts again, close to the bottom.
 
-So the question a city will face again is the one the protocol was written for: will tomorrow be bad enough to restrict
-traffic? The protocol makes the city announce restrictions before noon the day before. We built an agent that answers
-at that hour, every day, and is scored the next day. Then we asked the question everyone building agents asks: does it
-get better?
+![Two curves over time. Red: people and projects, a sawtooth that rises slowly and falls back each time the knowledge leaves with someone. Blue: agents that keep their record in tables, a line that keeps rising.](/assets/blog/always-learning-idea.svg)
 
-## The setup
+That is the red line: a sawtooth. Agents can draw the blue one, under one condition. What they learn must be kept
+somewhere the next run, the next agent and the next person can read. In practice that means tables: every decision,
+what happened, and how good the decision was. We call it **always-learning analytics**, and we wanted to know whether
+it holds up on a real problem, with numbers.
 
-Everything lives in one Apache Iceberg catalog on LakehouseBox:
+## The job: Madrid's air, decided by noon
 
-- the city's hourly air quality since 2010 (20.8 million readings);
-- its weather stations since 2019;
-- traffic every five minutes;
-- the protocol's live state and AEMET's forecast.
+Madrid has a protocol for nitrogen dioxide (NO2). When pollution is forecast to be high, the city must announce
+traffic restrictions before noon the day before. From 2030, EU rules make the limit much stricter: no station should
+average more than 50 µg/m³ on more than 18 days a year. Last winter some station went over 50 on about a third of the
+days.
 
-Scheduled SQL fetches each source and builds the tables the agent reads:
+So we gave an agent the city's job. Every day at noon it answers one question: **will some station go over 50
+tomorrow?** It gives a probability and is scored the next day against what the stations measured.
 
-- each day under every rule set (protocol 2018, EU 2030, WHO 2021, the parking surcharge);
-- each station's compliance each year;
-- each forecast with its Brier score.
+Everything lives in one Apache Iceberg catalog on LakehouseBox: the city's hourly air quality since 2010 (20.8
+million readings), its weather since 2019, the traffic, and the agent's own forecasts, outcomes and scores. The agent
+is a LakehouseBox hosted agent that runs next to the data.
 
-The agent is a LakehouseBox hosted agent: a prompt that runs next to the data at 12:00 Madrid time. It writes its
-forecasts to a table. Its scores are a table too.
+## The test: one winter, five kinds of memory
 
-A live agent needs months before a learning curve means anything. So we replayed a past winter instead: 1 October 2024
-to 31 March 2025, 182 days. Each day at "noon" four forecasters predicted the next day from what was known at that
-hour. All of them used the same model the hosted agent uses.
+A live agent needs months before its learning shows. So we replayed a past winter, 1 October 2024 to 31 March 2025:
+182 days. Each simulated day at noon, the forecasters saw only what was known at that hour. They all used the same
+model and got the same brief: the last week, this morning's readings, tomorrow's weather and calendar. Only their
+memory differed:
 
-- **Persistence**, no model: how often, in the last 28 days, a day like yesterday was followed by an event.
-- **Fresh**: the model with the day's brief and no memory.
-- **Notebook**: the model plus a notebook of up to 12 lessons. Every day it sees how its forecast for yesterday turned
-  out and rewrites the notebook. This is what "agent memory" usually means.
-- **Record**: the model plus a table computed from its own scored forecasts. It sees how often events happened when it
-  gave each probability, and what it said and what happened on the past days most like tomorrow. No prose: memory as
-  a query.
+1. **No memory.** Every day starts from zero.
+2. **Notes.** It keeps up to 12 lessons and rewrites them every day after seeing how it did. This is what "agent
+   memory" usually means today.
+3. **Its record, forgotten monthly.** It queries the table of its own scored forecasts, but the table is wiped on
+   the 1st of every month: the person or the project changes.
+4. **Its record, kept.** The same, never wiped.
+5. **Its record plus the city's tables.** The same, and also the days of the last three years most like tomorrow,
+   and what happened on them. The organisation's knowledge, from the first day.
 
-The brief was the same for all three model forecasters:
+## What we found
 
-- the last seven days;
-- this morning's hours by zone;
-- tomorrow's weekday and holidays;
-- tomorrow's weather.
+**Without memory, the agent makes the same mistake every day.** The model knows the meteorology: calm air and cold
+clear nights build NO2 up. But it applied that too eagerly. It said 49% on average for something that happened on 35%
+of the days, and it said so all winter. It never learns, because nothing tells it.
 
-There were three questions: will some station's daily mean exceed 50 µg/m³ (the 2030 limit)? Will five or more? Will
-the 12 background stations average over 60, the rule that raises parking prices the next day? Each forecast is scored
-with the Brier score, the squared error of the probability: 0 is perfect, and lower is better.
+**Notes decay.** October 2024 was clean, and the notebook learned that one day at a time. By 18 November, 11 of its 12
+lessons capped the chance of an exceedance at 20% or less. That day it said 15%; the model with no memory said 90%,
+and a station went over. Over the winter, two thirds of all the lessons it wrote said the same. Notes are a summary of
+the last few weeks, written as if they were rules, and they are hard to unlearn. That is the human sawtooth again:
+knowledge kept as prose.
 
-## What happened
+**Forgetting costs a week, every time.** In the first week of every month, the forecaster whose record had just been
+wiped did worse than the one that kept it: in all six months, and on average exactly as badly as no memory. By the
+third week it had caught up again.
 
-| Brier score (lower is better) | Record | Notebook | Fresh | Persistence |
-|---|---|---|---|---|
-| Some station above 50 (35% of days) | **0.146** | 0.154 | 0.168 | 0.200 |
-| Five or more above 50 (16% of days) | **0.095** | 0.120 | 0.114 | 0.150 |
-| Parking surcharge (2 days all winter) | 0.042 | 0.035 | 0.085 | **0.013** |
+![Extra error of the forecaster whose record is wiped on the 1st, by week of the month: clearly worse in week 1, level by week 3.](/assets/blog/always-learning-reset.svg)
 
-What the confidence intervals show (95%, a bootstrap over weeks, since days are not independent):
+**What compounds is what the organisation keeps.** The more knowledge the forecaster could query, the less it got
+wrong:
 
-- **The record forecaster** beat the fresh model on five or more stations and on the surcharge. On "some station
-  above 50" its lead is just short of clear: −0.020, with an interval of −0.043 to +0.001. It beat the fixed rule on
-  both EU 2030 questions, and it beat the notebook on five or more stations.
-- **The notebook** beat the fresh model only on the surcharge.
-- **On the surcharge, the fixed rule beat every model.** With 2 events in 182 days, saying "almost never" is the right
-  answer.
+![Less error than no memory, by what the forecaster keeps: notes 8%, record forgotten monthly 9%, record kept 13%, record plus the city's tables 18%.](/assets/blog/always-learning-ladder.svg)
 
-Three things stand out.
+The forecaster that read the city's tables did best: 18% less error than no memory, the one difference among these
+that is clearly larger than the noise of a single winter. It did not need a record of its own to start: in October,
+its first month, its error was 0.096 against 0.153 with no memory. It was also the only model to match the fixed
+"almost never" rule on the rarest question we asked, the parking surcharge, which happened twice all winter. Its own
+record could not teach it something that rare; three years of the city's history could.
 
-**Memory's first job is calibration.** The model knows the meteorology: calm air, cold clear nights and no rain build
-NO2 up. Without memory it applied that knowledge too eagerly. It said 49% on average for an event that happened on 35%
-of days, and 20% for a surcharge that happened twice all winter. Both memories mostly removed that bias. The record
-forecaster averaged 40%, and the notebook 39%. That is where most of the gain comes from.
+## What this means
 
-**The notebook drifted.** October 2024 was clean. The notebook learned that, one anecdote at a time: *"After several
-days with worst ~35-47 and no exceedance in the last 2 days, a forecast day with wind ~0.4 m/s and no rain […] yields
-no exceedance; set any_over_50 ≤0.2."* By 18 November, eleven of its twelve lessons capped that probability at 0.2 or less. On
-18 November it reasoned that "recent days have stayed below 50" and gave 15%. The fresh model said 90%, and a station
-went over. Over the winter, two thirds of all the lessons it wrote (1,381 of 2,066) capped the probability at 0.2 or
-less. Lessons written from single cases look precise, with thresholds and ranges. In fact they are a summary of the
-recent past, and they are hard to unlearn.
+The gain did not come from a smarter model. All five forecasters used the same one. It came from what each was
+allowed to keep, and from where that knowledge lived:
 
-**The record forecaster did not drift.** It never wrote anything down. Each day it got the facts again: "when you said
-0.6-0.8, it happened 9 times in 14", and "on the six past days most like tomorrow, you said this, and this happened".
-Its memory is a query over the table of its own forecasts, which is just a join for data the catalog already holds. It
-was better than or level with the fresh model on every question, by up to 50% on the surcharge.
+- **In a person's head, or in notes,** knowledge drifts and leaves. Every handover is a reset.
+- **In tables,** the record does not drift, because it is facts rather than conclusions. It survives a handover: a
+  new agent, a new person or a new question starts from it.
+- **In shared tables,** one agent's record becomes the next one's starting point. The forecaster that started from
+  the city's history did not have to learn the city again.
 
-Neither memory produced a curve that keeps going down. The gain shows up within the first weeks, when there is enough
-record to calibrate against, and then holds steady. Honestly put, the agent did not become a better meteorologist. It
-became a better-calibrated forecaster of this city, and stayed one.
+Its own record helped quickly, but more of it did not help further: a forecaster with three weeks of record did as
+well as one with months of it. On one question, accuracy has a ceiling; tomorrow's air can only be predicted so well.
+The compounding is not one forecast getting better forever. It is that nothing starts over: every run, every agent
+and every new question builds on the tables the last one left.
 
-## What we changed in the live agent
+## What the live agent does now
 
-The hosted forecaster now starts each run by reading its record:
-
-- its calibration by probability band;
-- the past days most like tomorrow, from a daily weather table joined to what happened. Until it has scored a month of
-  its own, it uses the history since 2019 for this.
-
-It still keeps a short memory of open decisions: the forecasts it must close the next day. It writes notes only for
-facts the data cannot show, such as a station out of service, a new low-emission rule or roadworks. It never writes
-rules drawn from a single day. The forecasts, outcomes, scores and memory are all tables, so anyone can check its work with SQL.
+The hosted forecaster runs every day at noon. Before it forecasts, it reads its record: how often an event happened
+when it gave each probability, and what happened on the past days most like tomorrow, from the city's history since
+2019. It writes notes only for facts the data cannot show, such as a station out of service or roadworks. Its
+forecasts, outcomes, scores and notes are all tables in the catalog, so anyone, person or agent, can check its work
+with SQL.
 
 ## Limits
 
-- In the replay, tomorrow's weather was given as measured: a perfect forecast, the same for all forecasters. The live
-  agent reads AEMET's forecast, which is not perfect.
+- One winter, one city, one model. Most differences between the forecasters are within the noise of 182 days. The
+  clear ones are those above: the first week after forgetting, and the city's tables against no memory.
+- In the replay, tomorrow's weather was given as it was measured: a perfect forecast, the same for every forecaster.
+  The live agent reads a real forecast.
 - The model was not told the year, but it was told the month and the weekday.
-- One winter, one model, one city. The surcharge question had two events, too few to rank anyone.
-- The protocol's own thresholds (180 µg/m³ in an hour) have not been reached since 2021, so the replay scores the EU
-  2030 rule, which is reached often.
 
 ## Reproduce it
 
-The repository has the catalog's migrations and every scheduled query. It also has the agent's prompt, the replay
-(`tools/replay.py`, with four forecasters and the scoring) and the page. The page is a LakehouseBox artifact that reads
-the catalog in your browser: the learning curve, the calibration, the notebook day by day, and every forecast as a
-table you can download.
+The repository has the catalog's migrations, every scheduled query, the agent's prompt and the replay
+(`tools/replay.py`: the five forecasters, the fixed-rule baseline and the scoring). The page is a LakehouseBox artifact
+that reads the catalog in your browser: every forecast of every forecaster, the calibration, the notebook day by day,
+and a table you can download.

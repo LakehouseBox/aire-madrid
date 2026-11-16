@@ -12,7 +12,7 @@
 :root {
   --bg: #fff; --ink: #0f2233; --muted: #55697a; --faint: #8b9aa8; --line: #e1e8ee; --land: #eef2f5; --tint: #f3f7fc;
   --brand: #1463e0; --bad: #c2410c; --bad-bg: #fdeee4; --good: #0f7b55; --good-bg: #e3f4ec;
-  --c-persistence: #8b9aa8; --c-fresh: #f08a3c; --c-memory: #7c3aed; --c-record: #1463e0;
+  --c-persistence: #8b9aa8; --c-fresh: #f08a3c; --c-memory: #7c3aed; --c-record: #1463e0; --c-reset: #d9534f; --c-history: #0e9f6e;
   --sans: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: ui-monospace, Menlo, Consolas, monospace;
   --r: 8px; --rs: 6px;
 }
@@ -95,7 +95,7 @@ footer { margin-top: 40px; padding: 20px 0 30px; border-top: 1px solid var(--lin
   <section class="sec" id="aprende">
     <div class="sechead"><h2>¿Aprende? Un invierno repetido día a día</h2>
       <div class="seg" id="qsel" role="group" aria-label="Pregunta"></div></div>
-    <p class="muted" style="max-width:80ch">Del 1 de octubre de 2024 al 31 de marzo de 2025, cada día a mediodía, cuatro previsores pronostican el día siguiente con lo que se sabía a esa hora. <b style="color:var(--c-persistence)">Persistencia</b>: una regla fija, sin modelo. <b style="color:var(--c-fresh)">Sin memoria</b>: el modelo, cada día desde cero. <b style="color:var(--c-memory)">Cuaderno</b>: el modelo con un cuaderno de lecciones que reescribe cada día al ver cómo le fue. <b style="color:var(--c-record)">Historial</b>: el modelo que consulta la tabla de sus propias previsiones puntuadas (cuánto acertó cuando dijo cada probabilidad, y qué pasó en días parecidos). Se mide con la puntuación de Brier: el error cuadrático de la probabilidad, 0 es perfecto y menos es mejor.</p>
+    <p class="muted" style="max-width:80ch">Del 1 de octubre de 2024 al 31 de marzo de 2025, cada día a mediodía, seis previsores pronostican el día siguiente con lo que se sabía a esa hora. <b style="color:var(--c-persistence)">Persistencia</b>: una regla fija, sin modelo. <b style="color:var(--c-fresh)">Sin memoria</b>: el modelo, cada día desde cero. <b style="color:var(--c-memory)">Cuaderno</b>: el modelo con un cuaderno de lecciones que reescribe cada día al ver cómo le fue. <b style="color:var(--c-record)">Historial</b>: el modelo que consulta la tabla de sus propias previsiones puntuadas (cuánto acertó cuando dijo cada probabilidad, y qué pasó en días parecidos). <b style="color:var(--c-reset)">Olvida cada mes</b>: el mismo, pero su historial se borra el día 1 de cada mes, como cuando cambia la persona o el proyecto. <b style="color:var(--c-history)">Historial + ciudad</b>: el mismo, y además los días más parecidos a mañana de los últimos tres años en las tablas de la ciudad. Se mide con la puntuación de Brier: el error cuadrático de la probabilidad, 0 es perfecto y menos es mejor.</p>
     <div id="p-curve"><div class="placeholder" style="min-height:260px"></div></div>
     <div class="grid2" style="margin-top:22px">
       <div id="p-scores"><div class="placeholder"></div></div>
@@ -124,9 +124,9 @@ footer { margin-top: 40px; padding: 20px 0 30px; border-top: 1px solid var(--lin
 <script type="module">
 import { lhbox } from '/_lhbox/lhbox.js';
 
-const ARMS = ['persistence', 'fresh', 'memory', 'record'];
-const ARM_NAME = { persistence: 'Persistencia', fresh: 'Sin memoria', memory: 'Cuaderno', record: 'Historial' };
-const ARM_COLOR = { persistence: 'var(--c-persistence)', fresh: 'var(--c-fresh)', memory: 'var(--c-memory)', record: 'var(--c-record)' };
+const ARMS = ['persistence', 'fresh', 'memory', 'reset', 'record', 'history'];
+const ARM_NAME = { persistence: 'Persistencia', fresh: 'Sin memoria', memory: 'Cuaderno', reset: 'Olvida cada mes', record: 'Historial', history: 'Historial + ciudad' };
+const ARM_COLOR = { persistence: 'var(--c-persistence)', fresh: 'var(--c-fresh)', memory: 'var(--c-memory)', reset: 'var(--c-reset)', record: 'var(--c-record)', history: 'var(--c-history)' };
 const Q_NAME = { any_over_50: 'Alguna estación > 50', five_over_50: '5 o más estaciones > 50', ser_over_60: 'Recargo SER (> 60)' };
 const REPLAY = 'winter 2024-25';
 const nf = (v, d = 0) => v == null ? '–' : Number(v).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });

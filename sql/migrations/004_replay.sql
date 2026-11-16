@@ -1,4 +1,4 @@
--- The replay (tools/replay.py): past winters forecast day by day by three forecasters, to see whether one that keeps
+-- The replay (tools/replay.py): past winters forecast day by day by several forecasters, to see whether one that keeps
 -- a notebook of its mistakes gets better. One row per forecaster, day and question; and the notebook, day by day.
 
 -- lhbox: format-version=2
